@@ -1,0 +1,479 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "Documentación de API para botón de pagos de CVU.",
+    "version" : "1.1.0",
+    "title" : "API Botón de pagos CVU",
+    "contact" : {
+      "email" : "galvarez@intergrupo.com"
+    }
+  },
+  "host" : "localhost:3000",
+  "basePath" : "/api",
+  "tags" : [ {
+    "name" : "payments",
+    "description" : "Hacer pagos a través de CVU"
+  } ],
+  "schemes" : [ "http" ],
+  "paths" : {
+    "/submitTransaction" : {
+      "post" : {
+        "tags" : [ "payments" ],
+        "summary" : "Crea una nueva transacción de pagos",
+        "operationId" : "submTransaction",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "description" : "Objeto de la petición",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/PaymentRequest"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Transacción creada correctamente",
+            "schema" : {
+              "$ref" : "#/definitions/PaymentResponse"
+            }
+          },
+          "400" : {
+            "description" : "Request inválido, vacio o nulo, Entidad no pasó validaciones"
+          },
+          "401" : {
+            "description" : "Crendenciales inválidas"
+          }
+        }
+      }
+    },
+    "/findByReferenceCode" : {
+      "post" : {
+        "tags" : [ "payments" ],
+        "summary" : "Busca una transacción por el referenceCode",
+        "description" : "Busca una transacción por el referenceCode generado anteriormente",
+        "operationId" : "referenceCode",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/TransactionRequest"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/TransactionResponse"
+            }
+          },
+          "400" : {
+            "description" : "code es requerido"
+          },
+          "401" : {
+            "description" : "Credenciales inválidas"
+          },
+          "404" : {
+            "description" : "No existe información para este número de transacción. Cliente no registrado"
+          }
+        }
+      }
+    },
+    "/findByTransactionId" : {
+      "post" : {
+        "tags" : [ "payments" ],
+        "summary" : "Busca una transacción por el transactionId",
+        "description" : "Busca una transacción por el transactionId",
+        "operationId" : "transactionId",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/TransactionRequest"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/TransactionResponse"
+            }
+          },
+          "400" : {
+            "description" : "code es requerido"
+          },
+          "401" : {
+            "description" : "Credenciales inválidas"
+          },
+          "404" : {
+            "description" : "No existe información para este numero de transacción. Cliente no registrado"
+          }
+        }
+      }
+    },
+    "/createUser" : {
+      "post" : {
+        "tags" : [ "users" ],
+        "summary" : "Crea un usuario (cliente)",
+        "description" : "Crea un cliente para la autenticacion de pagos",
+        "operationId" : "createUser",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/Client"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Usuario creado correctamente",
+            "schema" : {
+              "$ref" : "#/definitions/Client"
+            }
+          }
+        }
+      }
+    },
+    "/updateUser" : {
+      "put" : {
+        "tags" : [ "users" ],
+        "summary" : "Actualiza datos",
+        "description" : "Actualiza datos de un usuario previamente registrado",
+        "operationId" : "updateUser",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "user",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/Client"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "usuario actualizado correctamente",
+            "schema" : {
+              "$ref" : "#/definitions/Client"
+            }
+          }
+        }
+      }
+    },
+    "/deleteUser" : {
+      "delete" : {
+        "tags" : [ "users" ],
+        "summary" : "Borra un usuario",
+        "description" : "Borra un usuario de la base de datos",
+        "operationId" : "deleteUser",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/body"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Usuario eliminado correctamente"
+          }
+        }
+      }
+    },
+    "/users" : {
+      "get" : {
+        "tags" : [ "users" ],
+        "summary" : "Consulta usuarios",
+        "description" : "Consulta todos los usuarios",
+        "operationId" : "getUserById",
+        "produces" : [ "application/json" ],
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "sucess",
+            "schema" : {
+              "$ref" : "#/definitions/Client"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "Payment" : {
+      "type" : "object",
+      "required" : [ "description", "value" ],
+      "properties" : {
+        "value" : {
+          "type" : "integer",
+          "example" : 105000,
+          "description" : "Valor de la compra"
+        },
+        "description" : {
+          "type" : "string",
+          "example" : "Compra de tiquetes",
+          "description" : "Descripción de la compra"
+        },
+        "status" : {
+          "type" : "string",
+          "example" : "REJECTED",
+          "description" : "Estado de la transacción (APPROVED, REJECTED, PENDING)"
+        },
+        "statusDetail" : {
+          "type" : "string",
+          "example" : "Rechazado por fondos insuficientes",
+          "description" : "Descripción mas detallada del estado"
+        }
+      }
+    },
+    "User" : {
+      "type" : "object",
+      "required" : [ "cellPhone", "documentNumber", "documentType", "email", "firstName", "lastName" ],
+      "properties" : {
+        "firstName" : {
+          "type" : "string",
+          "example" : "John",
+          "description" : "Nombre del usuario comprador"
+        },
+        "lastName" : {
+          "type" : "string",
+          "example" : "Doe",
+          "description" : "Apellido del usuario comprador"
+        },
+        "documentType" : {
+          "type" : "string",
+          "example" : "CC",
+          "description" : "Tipos de documentos avalados"
+        },
+        "documentNumber" : {
+          "type" : "string",
+          "example" : "123456789",
+          "description" : "Número de documento del comprador"
+        },
+        "email" : {
+          "type" : "string",
+          "example" : "johndoe@mail.com",
+          "description" : "Email del usuario comprador"
+        },
+        "cellPhone" : {
+          "type" : "string",
+          "example" : "3001234567",
+          "description" : "Número de celular del comprador"
+        }
+      }
+    },
+    "Travel" : {
+      "type" : "object",
+      "required" : [ "destination", "origin", "type" ],
+      "properties" : {
+        "origin" : {
+          "type" : "string",
+          "example" : "Cartagena",
+          "description" : "Lugar origen del viaje"
+        },
+        "destination" : {
+          "type" : "string",
+          "example" : "Bogotá",
+          "description" : "Lugar destino del viaje"
+        },
+        "type" : {
+          "type" : "string",
+          "example" : "Tiquetes",
+          "description" : "Tipo de compra (Hotel, tiquetes, paquete)"
+        }
+      }
+    },
+    "PaymentRequest" : {
+      "type" : "object",
+      "required" : [ "confirmUrl", "ipAddress", "password", "payment", "redirectUrl", "referenceCode", "travel", "user", "username" ],
+      "properties" : {
+        "username" : {
+          "type" : "string",
+          "example" : "comercio1",
+          "description" : "Debe ser el username del comercio"
+        },
+        "password" : {
+          "type" : "string",
+          "example" : "passwordComercio1",
+          "description" : "Debe ser el password del comercio"
+        },
+        "referenceCode" : {
+          "type" : "string",
+          "example" : "REF_PAYMENT_1",
+          "description" : "Debe ser el id generado por el comercio"
+        },
+        "ipAddress" : {
+          "type" : "string",
+          "example" : "127.0.0.1",
+          "description" : "Debe ser la ip desde la cual se realizó la petición"
+        },
+        "redirectUrl" : {
+          "type" : "string",
+          "example" : "https://yourhost.com/redirect",
+          "description" : "Debe ser la url de redirección luego que se confirme el pago"
+        },
+        "confirmUrl" : {
+          "type" : "string",
+          "example" : "https://yourhost.com/confirm",
+          "description" : "Debe ser la url del servicio de confirmación del cliente para actualizar el estado de la transacción en base de datos. Favor revisar servicio de confirmacion"
+        },
+        "payment" : {
+          "$ref" : "#/definitions/PaymentRequest_payment"
+        },
+        "user" : {
+          "$ref" : "#/definitions/User"
+        },
+        "travel" : {
+          "$ref" : "#/definitions/Travel"
+        }
+      }
+    },
+    "PaymentResponse" : {
+      "type" : "object",
+      "properties" : {
+        "transactionId" : {
+          "type" : "string",
+          "example" : "id-123-123-123",
+          "description" : "Id de la transacción"
+        },
+        "referenceCode" : {
+          "type" : "string",
+          "example" : "REF_PAYMENT_1",
+          "description" : "Es el referenceCode de la Transacción"
+        },
+        "url" : {
+          "type" : "string",
+          "example" : "https://exampleurl.com/token",
+          "description" : "Es la url generada para la redirección al landing de cvu"
+        },
+        "hash" : {
+          "type" : "string",
+          "example" : "bdd2c54cc0cf4432338d3d573f62b31c4d15a74041af6b5b990104f126cf8e36",
+          "description" : "Token generado para interacción con el API"
+        },
+        "status" : {
+          "type" : "string",
+          "example" : "REJECTED",
+          "description" : "Es el estado de la transacción (APPROVED, REJECTED, PENDING)"
+        },
+        "statusDetail" : {
+          "type" : "string",
+          "example" : "Fondos insuficientes",
+          "description" : "Es el detalle del estado para el caso de REJECTED del porqué se dió este estado"
+        }
+      }
+    },
+    "TransactionResponse" : {
+      "type" : "object",
+      "properties" : {
+        "transactionId" : {
+          "type" : "string",
+          "example" : "id-123-123-123",
+          "description" : "Id de la transacción"
+        },
+        "referenceCode" : {
+          "type" : "string",
+          "example" : "REF_PAYMENT_1",
+          "description" : "Es el referenceCode de la Transacción"
+        },
+        "payment" : {
+          "$ref" : "#/definitions/Payment"
+        },
+        "travel" : {
+          "$ref" : "#/definitions/Travel"
+        },
+        "user" : {
+          "$ref" : "#/definitions/User"
+        }
+      }
+    },
+    "TransactionRequest" : {
+      "type" : "object",
+      "required" : [ "code", "password", "username" ],
+      "properties" : {
+        "username" : {
+          "type" : "string",
+          "example" : "comercio1",
+          "description" : "Debe ser el username del comercio"
+        },
+        "password" : {
+          "type" : "string",
+          "example" : "passwordComercio1",
+          "description" : "Debe ser el password del comercio"
+        },
+        "code" : {
+          "type" : "string",
+          "example" : "id-123-123-123 ó REF_PAYMENT_",
+          "description" : "Puede ser el transactionId o el referenceCode de la transacción"
+        }
+      }
+    },
+    "Client" : {
+      "type" : "object",
+      "required" : [ "email", "firstName", "lastName", "password", "username" ],
+      "properties" : {
+        "id" : {
+          "type" : "integer",
+          "example" : 1102,
+          "description" : "Identificador único del cliente"
+        },
+        "firstName" : {
+          "type" : "string",
+          "example" : "John",
+          "description" : "Nombre del cliente"
+        },
+        "lastName" : {
+          "type" : "string",
+          "example" : "Doe",
+          "description" : "Apellido del cliente"
+        },
+        "username" : {
+          "type" : "string",
+          "example" : "username",
+          "description" : "Username del cliente"
+        },
+        "password" : {
+          "type" : "string",
+          "example" : "123456789",
+          "description" : "Contraseña del cliente"
+        },
+        "email" : {
+          "type" : "string",
+          "example" : "johndoe@mail.com",
+          "description" : "Email del usuario comprador"
+        }
+      }
+    },
+    "body" : {
+      "type" : "object",
+      "required" : [ "userId" ],
+      "properties" : {
+        "userId" : {
+          "type" : "string"
+        }
+      }
+    },
+    "PaymentRequest_payment" : {
+      "properties" : {
+        "value" : {
+          "type" : "integer",
+          "example" : 105000,
+          "description" : "Valor de la compra"
+        },
+        "description" : {
+          "type" : "string",
+          "example" : "Compra de tiquetes",
+          "description" : "Descripción de la compra"
+        }
+      }
+    }
+  }
+}
